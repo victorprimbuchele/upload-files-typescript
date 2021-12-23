@@ -26,7 +26,11 @@ const convertNestedObjectToArray = (nestedObj: any) => {
 const convertBytesToKB = (bytes: number) =>
   Math.round(bytes / KILO_BYTES_PER_BYTE);
 
-// Propriedades do arquivo a ser subido
+// Propriedades usadas do arquivo a ser subido;
+// O arquivo possui outras propriedades, tais como:
+/** lastModified
+ *  lastModifiedDate
+ *  webkitRelativePath */
 export type IFile = {
   size: number;
   name: string;
@@ -76,24 +80,35 @@ const FileUpload = ({
   };
 
   const callUpdateFilesCb = (files: {}) => {
+    // Executa função de conversão
     const filesAsArray: any = convertNestedObjectToArray(files);
+    // Atualiza arquivos
     updateFilesCb(filesAsArray);
   };
 
   const handleNewFileUpload = (
     e: React.ChangeEvent<HTMLInputElement | any>
   ) => {
+    // Capta os arquivos do evento de mudança do input
     const { files: newFiles } = e.target;
+    // newFile é um objeto, onde: posição 0: próprio file, posição 1: length
     if (newFiles?.length) {
+      // adiciona newFiles
       let updatedFiles = addNewFiles(newFiles);
+      // altera estado de files
       setFiles(updatedFiles);
+      // chama função de atualização de arquivos
       callUpdateFilesCb(updatedFiles);
     }
   };
 
+  // recebe nome do arquivo clicado
   const removeFile = (fileName: string) => {
+    // deleta o arquivo com aquele nome
     delete files[fileName];
+    // sobrescreve files com os arquivo remanescentes
     setFiles({ ...files });
+    // atualiza arquivos novamente
     callUpdateFilesCb({ ...files });
   };
 
